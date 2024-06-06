@@ -33,8 +33,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -128,6 +127,9 @@ import org.eclipse.jdt.internal.core.ResolvedSourceMethod;
 import org.eclipse.jdt.internal.core.ResolvedSourceType;
 import org.eclipse.jdt.internal.core.search.BasicSearchEngine;
 import org.eclipse.jdt.internal.core.util.Util;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AbstractJavaModelTests extends SuiteOfTestCases {
@@ -3475,7 +3477,6 @@ public abstract class AbstractJavaModelTests extends SuiteOfTestCases {
 		javaProject.setOption(JavaCore.COMPILER_COMPLIANCE, compliance);
 		javaProject.setOption(JavaCore.COMPILER_SOURCE, compliance);
 		javaProject.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compliance);
-		javaProject.setOption(CompilerOptions.OPTION_SimulateOperandStack, CompilerOptions.DISABLED);
 		return javaProject;
 	}
 	protected void setUpProjectCompliance(IJavaProject javaProject, String compliance) throws JavaModelException, IOException {
@@ -3500,8 +3501,8 @@ public abstract class AbstractJavaModelTests extends SuiteOfTestCases {
 		} else {
 			if (compliance.equals("22")) {
 				// Reuse the same 17 stuff as of now. No real need for a new one
-				newJclLibString = "JCL_21_LIB";
-				newJclSrcString = "JCL_21_SRC";
+				newJclLibString = "JCL_22_LIB";
+				newJclSrcString = "JCL_22_SRC";
 			} else			if (compliance.equals("21")) {
 				// Reuse the same 14 stuff as of now. No real need for a new one
 				newJclLibString = "JCL_21_LIB";
@@ -3720,10 +3721,10 @@ public abstract class AbstractJavaModelTests extends SuiteOfTestCases {
 			}
 		} else if ("22".equals(compliance)) {
 			if (JavaCore.getClasspathVariable("JCL_22_LIB") == null) {
-				setupExternalJCL("jclMin21");
+				setupExternalJCL("jclMin22");
 				JavaCore.setClasspathVariables(
-					new String[] {"JCL_21_LIB", "JCL_21_SRC", "JCL_SRCROOT"},
-					new IPath[] {getExternalJCLPath("21"), getExternalJCLSourcePath("21"), getExternalJCLRootSourcePath()},
+					new String[] {"JCL_22_LIB", "JCL_22_SRC", "JCL_SRCROOT"},
+					new IPath[] {getExternalJCLPath("22"), getExternalJCLSourcePath("22"), getExternalJCLRootSourcePath()},
 					null);
 			}
 		} else {
