@@ -1264,6 +1264,28 @@ class BoundSet {
 	}
 
 	protected List<Pair<TypeBinding>> allSuperPairsWithCommonGenericType(TypeBinding s, TypeBinding t) {
+		HashMap<Integer, Integer> depthCounts = new HashMap<>();
+		List<Pair<TypeBinding>> ret = allSuperPairsWithCommonGenericTypeRecursive(s, t, 0, depthCounts);
+
+		System.out.println(depthCounts);
+		return ret;
+	}
+
+	protected List<Pair<TypeBinding>> allSuperPairsWithCommonGenericTypeRecursive(TypeBinding s, TypeBinding t, int depth, Map<Integer, Integer> depthCounts) {
+
+//		String debugLine = "depth = " + depth + " | s= " + s.debugName() + " | t= " + t.debugName();
+//		sb.append(debugLine);
+//		sb.append(System.lineSeparator());
+
+//		if (depth > 23) {
+//			System.out.println(debugLine);
+//		}
+
+		if (depthCounts.containsKey(depth))
+			depthCounts.put(depth, depthCounts.get(depth) + 1);
+		else
+			depthCounts.put(depth, 0);
+
 		if (s == null || s.id == TypeIds.T_JavaLangObject || t == null || t.id == TypeIds.T_JavaLangObject)
 			return Collections.emptyList();
 		List<Pair<TypeBinding>> result = new ArrayList<>();
@@ -1274,11 +1296,11 @@ class BoundSet {
 		if (tSuper != null) {
 			result.add(new Pair<>(s, tSuper));
 		}
-		result.addAll(allSuperPairsWithCommonGenericType(s.superclass(), t));
+		result.addAll(allSuperPairsWithCommonGenericTypeRecursive(s.superclass(), t, depth + 1, depthCounts));
 		ReferenceBinding[] superInterfaces = s.superInterfaces();
 		if (superInterfaces != null) {
 			for (ReferenceBinding superInterface : superInterfaces) {
-				result.addAll(allSuperPairsWithCommonGenericType(superInterface, t));
+				result.addAll(allSuperPairsWithCommonGenericTypeRecursive(superInterface, t, depth + 1, depthCounts));
 			}
 		}
 		return result;
