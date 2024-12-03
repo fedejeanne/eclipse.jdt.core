@@ -1265,13 +1265,24 @@ class BoundSet {
 
 	protected List<Pair<TypeBinding>> allSuperPairsWithCommonGenericType(TypeBinding s, TypeBinding t) {
 		HashMap<Integer, Integer> depthCounts = new HashMap<>();
-		List<Pair<TypeBinding>> ret = allSuperPairsWithCommonGenericTypeRecursive(s, t, 0, depthCounts);
 
-		System.out.println(depthCounts);
+		Collection<Object> visited = new HashSet<>();
+
+		// Uncomment this to see how much processing is needed when runs are allowed to be "duplicated"
+//		visited = new ArrayList<>();
+
+		List<Pair<TypeBinding>> ret = allSuperPairsWithCommonGenericTypeRecursive(s, t, 0, depthCounts, visited);
+
+		System.out.println("depthCounts=" + depthCounts);
+		System.out.println("visited (size: " + visited.size() + ")=" + visited);
 		return ret;
 	}
 
-	protected List<Pair<TypeBinding>> allSuperPairsWithCommonGenericTypeRecursive(TypeBinding s, TypeBinding t, int depth, Map<Integer, Integer> depthCounts) {
+	protected List<Pair<TypeBinding>> allSuperPairsWithCommonGenericTypeRecursive(TypeBinding s, TypeBinding t, int depth, Map<Integer, Integer> depthCounts, Collection<Object> visited) {
+
+		if (!visited.add(List.of(s.debugName(), t.debugName()))) {
+			return List.of();
+		}
 
 //		String debugLine = "depth = " + depth + " | s= " + s.debugName() + " | t= " + t.debugName();
 //		sb.append(debugLine);
@@ -1296,11 +1307,11 @@ class BoundSet {
 		if (tSuper != null) {
 			result.add(new Pair<>(s, tSuper));
 		}
-		result.addAll(allSuperPairsWithCommonGenericTypeRecursive(s.superclass(), t, depth + 1, depthCounts));
+		result.addAll(allSuperPairsWithCommonGenericTypeRecursive(s.superclass(), t, depth + 1, depthCounts, visited));
 		ReferenceBinding[] superInterfaces = s.superInterfaces();
 		if (superInterfaces != null) {
 			for (ReferenceBinding superInterface : superInterfaces) {
-				result.addAll(allSuperPairsWithCommonGenericTypeRecursive(superInterface, t, depth + 1, depthCounts));
+				result.addAll(allSuperPairsWithCommonGenericTypeRecursive(superInterface, t, depth + 1, depthCounts, visited));
 			}
 		}
 		return result;
