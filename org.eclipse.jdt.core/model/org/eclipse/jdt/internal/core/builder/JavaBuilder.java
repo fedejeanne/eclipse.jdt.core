@@ -201,9 +201,10 @@ protected IProject[] build(int kind, Map<String, String> ignoredArgs, IProgressM
 	this.currentProject = getProject();
 	if (this.currentProject == null || !this.currentProject.isAccessible()) return new IProject[0];
 
+	long startTimeMs = System.currentTimeMillis();
 	if (DEBUG) {
 		trace("\nJavaBuilder: Starting build of " + this.currentProject.getName() //$NON-NLS-1$
-			+ " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
+			+ " @ " + new Date(startTimeMs)); //$NON-NLS-1$
 	}
 	this.notifier = new BuildNotifier(monitor,kind,
 			kind == IncrementalProjectBuilder.AUTO_BUILD ? this::isInterrupted : ()->false);
@@ -297,8 +298,10 @@ protected IProject[] build(int kind, Map<String, String> ignoredArgs, IProgressM
 	}
 	IProject[] requiredProjects = getRequiredProjects(true);
 	if (DEBUG) {
+		long endTimeMs = System.currentTimeMillis();
 		trace("JavaBuilder: Finished build of " + this.currentProject.getName() //$NON-NLS-1$
-			+ " @ " + new Date(System.currentTimeMillis()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			+ " @ " + new Date(endTimeMs) //$NON-NLS-1$
+			+ " (took " + (endTimeMs - startTimeMs) + " ms)\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	return requiredProjects;
 }
